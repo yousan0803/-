@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Digital Card</title>
+    <style>
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+        }
+        .card {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            text-align: center;
+            width: 320px;
+        }
+        h1 {
+            margin: 0;
+            font-size: 1.5rem;
+            color: #2d3748;
+        }
+        p {
+            color: #718096;
+            margin: 10px 0 20px;
+        }
+        .status {
+            display: inline-block;
+            padding: 5px 12px;
+            background: #e6fffa;
+            color: #38a169;
+            border-radius: 999px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="status">Connected to Supabase</div>
+        <h1>名刺アプリへようこそ！</h1>
+        <p>Vercelでの公開に成功しました。</p>
+        <hr style="border: 0; border-top: 1px solid #eee;">
+        <p style="font-size: 0.9rem;">次はSupabaseからデータを読み込む設定をしましょう！</p>
+    </div>
+</body>
+</html>
