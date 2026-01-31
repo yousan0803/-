@@ -3,53 +3,71 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Digital Card</title>
+    <title>Digital Business Card</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        body {
-            font-family: 'Helvetica Neue', Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: #333;
-        }
-        .card {
-            background: white;
-            padding: 2.5rem;
-            border-radius: 20px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-            text-align: center;
-            width: 320px;
-        }
-        h1 {
-            margin: 0;
-            font-size: 1.5rem;
-            color: #2d3748;
-        }
-        p {
-            color: #718096;
-            margin: 10px 0 20px;
-        }
-        .status {
-            display: inline-block;
-            padding: 5px 12px;
-            background: #e6fffa;
-            color: #38a169;
-            border-radius: 999px;
-            font-size: 0.8rem;
-            font-weight: bold;
-        }
+        :root { --gold: #c5a059; --bg: #0f0f0f; --card: #1a1a1a; }
+        body { margin: 0; background: var(--bg); color: white; font-family: 'Helvetica Neue', Arial, sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        .card { width: 90%; max-width: 380px; background: var(--card); border-radius: 24px; overflow: hidden; box-shadow: 0 30px 60px rgba(0,0,0,0.8); border: 1px solid #333; position: relative; }
+        .gold-bar { height: 6px; background: linear-gradient(90deg, var(--gold), #f9e3b4); }
+        .content { padding: 40px 30px; text-align: center; }
+        .profile-img { width: 120px; height: 120px; border-radius: 50%; background: #333; margin: 0 auto 20px; border: 3px solid var(--gold); object-fit: cover; }
+        .name { font-size: 1.8rem; font-weight: bold; color: var(--gold); margin: 0; letter-spacing: 1px; }
+        .title { font-size: 1rem; color: #aaa; margin-top: 8px; letter-spacing: 2px; text-transform: uppercase; }
+        .divider { height: 1px; background: #333; margin: 30px 0; }
+        .action-btn { display: block; background: linear-gradient(135deg, var(--gold), #a68545); color: #000; text-decoration: none; padding: 15px; border-radius: 50px; font-weight: bold; font-size: 1rem; transition: 0.3s; box-shadow: 0 10px 20px rgba(197, 160, 89, 0.2); }
+        .action-btn:hover { transform: translateY(-3px); box-shadow: 0 15px 25px rgba(197, 160, 89, 0.3); }
+        #error { color: #ff6b6b; margin-top: 20px; font-size: 0.8rem; display: none; }
     </style>
 </head>
 <body>
     <div class="card">
-        <div class="status">Connected to Supabase</div>
-        <h1>名刺アプリへようこそ！</h1>
-        <p>Vercelでの公開に成功しました。</p>
-        <hr style="border: 0; border-top: 1px solid #eee;">
-        <p style="font-size: 0.9rem;">次はSupabaseからデータを読み込む設定をしましょう！</p>
+        <div class="gold-bar"></div>
+        <div class="content">
+            <div id="avatar" class="profile-img"></div>
+            <h1 id="name" class="name">AUTHENTICATING...</h1>
+            <p id="title" class="title">PLEASE WAIT</p>
+            <div class="divider"></div>
+            <a id="link" href="#" class="action-btn">CONNECT</a>
+            <p id="error">顧客データが見つかりません。URLを確認してください。</p>
+        </div>
     </div>
+
+    <script>
+        // 【重要】あなたのSupabase情報をここに入力してください
+        const SB_URL = "あなたのSupabaseのURL"; 
+        const SB_KEY = "あなたのSupabaseのAnon Key";
+
+        const supabaseClient = supabase.createClient(SB_URL, SB_KEY);
+
+        async function loadProfile() {
+            // URLの「?id=xxx」から顧客を特定します
+            const urlParams = new URLSearchParams(window.location.search);
+            const customerId = urlParams.get('id');
+
+            if (!customerId) {
+                document.getElementById('name').innerText = "SYSTEM ACTIVE";
+                document.getElementById('title').innerText = "IDを指定してください";
+                return;
+            }
+
+            // Supabaseの'profiles'テーブルから、slugがcustomerIdと一致する人を検索
+            const { data, error } = await supabaseClient
+                .from('profiles')
+                .select('*')
+                .eq('slug', customerId)
+                .single();
+
+            if (data) {
+                document.getElementById('name').innerText = data.name;
+                document.getElementById('title').innerText = data.title;
+                document.getElementById('link').href = data.link || "#"; // 連絡先リンク
+            } else {
+                document.getElementById('error').style.display = 'block';
+                document.getElementById('name').innerText = "NOT FOUND";
+            }
+        }
+        loadProfile();
+    </script>
 </body>
 </html>
